@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicMall ChatBot🤖</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000000; /* 검은색 배경 설정 */
+            color: #ffffff; /* 텍스트 색상 설정 */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .chat-container {
+            width: 60%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #444; /* 어두운 테두리 */
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* 어두운 그림자 */
+            background-color: #1e1e1e; /* 어두운 배경색 */
+            max-height: 80vh;
+            min-height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #444; /* 어두운 테두리 */
+            border-radius: 10px;
+            background-color: #2e2e2e; /* 어두운 메시지 배경색 */
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+        .message.user {
+            text-align: right;
+            background-color: #4a4a4a; /* 어두운 사용자 메시지 배경색 */
+            color: #ffffff; /* 흰색 텍스트 */
+        }
+        .message.assistant {
+            text-align: left;
+            background-color: #3a3a3a; /* 어두운 어시스턴트 메시지 배경색 */
+            color: #ffffff; /* 흰색 텍스트 */
+        }
+        .message.loading {
+            text-align: left;
+            background-color: #555555; /* 어두운 로딩 메시지 배경색 */
+            color: #ffffff; /* 흰색 텍스트 */
+        }
+        #chat-form {
+            display: flex;
+        }
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #444; /* 어두운 테두리 */
+            border-radius: 10px 0 0 10px;
+            outline: none;
+            height: 20px;
+            background-color: #2e2e2e; /* 어두운 입력 배경색 */
+            color: #ffffff; /* 흰색 텍스트 */
+        }
+        #message-input:focus {
+            border-color: #007bff; /* 포커스 시 파란색 테두리 */
+        }
+        button {
+            background-color: #000000; /* 검은색 배경 */
+            color: #FFFFFF; /* 흰색 텍스트 */
+            border: 1px solid #808080; /* 회색 테두리 */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #333333; /* 어두운 회색 호버 배경 */
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">MusicMall ChatBot 🤖</div>
+    <div class="chat-container">
+        <div class="messages" id="messages"></div>
+        <form id="chat-form">
+            <input type="text" id="message-input" placeholder="Type your message here..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("chat-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const messageInput = document.getElementById("message-input");
+            const userMessage = messageInput.value;
+
+            // 사용자 메시지를 화면에 추가
+            const messagesDiv = document.getElementById("messages");
+            const userMessageDiv = document.createElement("div");
+            userMessageDiv.className = "message user";
+            userMessageDiv.textContent = userMessage;
+            messagesDiv.appendChild(userMessageDiv);
+
+            // '답변 중...' 메시지를 추가
+            const loadingMessageDiv = document.createElement("div");
+            loadingMessageDiv.className = "message loading";
+            loadingMessageDiv.textContent = "...";
+            messagesDiv.appendChild(loadingMessageDiv);
+
+            // 서버에 메시지 전송
+            fetch("", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: new URLSearchParams({
+                    "message": userMessage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // '답변 중...' 메시지를 제거하고 서버로부터의 응답 메시지를 추가
+                messagesDiv.removeChild(loadingMessageDiv);
+
+                const assistantMessageDiv = document.createElement("div");
+                assistantMessageDiv.className = "message assistant";
+                assistantMessageDiv.innerHTML = data.message; // textContent 대신 innerHTML 사용
+                messagesDiv.appendChild(assistantMessageDiv);
+
+                // 스크롤을 맨 아래로 이동
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+
+            messageInput.value = "";
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
