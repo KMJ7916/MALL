@@ -9,7 +9,8 @@ from apps.carts.models import Cart
 import json
 from django.contrib.auth.decorators import login_required
 import random
-
+from django.views.decorators.csrf import csrf_exempt
+import os
 
 # def song_recommend(user):
 #     # 유저의 찜한목록을 가져온다
@@ -151,4 +152,51 @@ def search(request):
             return JsonResponse({'success': 'false', 'message': '검색 결과가 없습니다.'})
     else:
         return JsonResponse({'error': 'Invalid request method'})
+
+
+# 시스템 메시지 초기화
+initial_system_message = {
+    "role": "system",
+    "content": "You are a helpful assistant that specializes in providing information on MusicMall. You can explain how to buy music and recommend music."
+}
+
+# 메시지 초기화
+messages = [initial_system_message]
+
+# MusicMall에 대한 시스템 컨텐츠 예시
+system_contents = {
+    "안녕": "안녕하세요! 저는 Music Mall에 대한 챗봇입니다.🤖 다음과 같이 입력해주세요 \n 1. 음악 추천 \n 2.구매방법 \n 3.MVP 소개",
+    "구매 방법": "MusicMall에서 제품을 구매하는 방법은 다음과 같습니다.\n 구매자는 한 곡씩 구매 가능합니다.\n 찜 기능과 팔로우 기능을 활용해주세요!",
+    "FAQ": "자주 묻는 질문과 답변은 다음과 같습니다: ...",
+    "안내사항": "챗봇을 사용하면서 유의해야 할 사항은 다음과 같습니다: ..."
+}
+
+@csrf_exempt
+def chatbot_view(request):
+    if request.method == "POST":
+        user_message = request.POST.get("message")
+        messages.append({"role": "user", "content": user_message})
+
+        # 시스템 컨텐츠에 대한 질문을 처리
+        if user_message in system_contents:
+            assistant_message = system_contents[user_message]
+            messages.append({"role": "assistant", "content": assistant_message})
+            return JsonResponse({"message": assistant_message.replace("\n", "<br>")})
+
+        # 음악 추천에 대한 질문을 처리
+        elif any(keyword in user_message for keyword in ["노래 추천", "노래추천", "음악추천", "음악 추천"]):
+            # 데이터베이스에서 노래 목록 가져오기
+            songs = Song.objects.all()
+            music_recommendations = [f"{song.title} - {song.seller}" for song in songs]
+            assistant_message = "Music Mall에 있는 음악을 몇 가지 추천 해드릴게요! \n" + "\n".join(music_recommendations)
+            messages.append({"role": "assistant", "content": assistant_message})
+            return JsonResponse({"message": assistant_message.replace("\n", "<br>")})
+
+        # 그 외의 질문에 대한 기본 응답
+        else:
+            assistant_message = "해당 질문에 대해 제공할 수 있는 답변이 없습니다. \n 다음과 같이 입력해주세요 1. 음악 추천 2.구매 방법 3. Music Mall MVP 소개"
+            messages.append({"role": "assistant", "content": assistant_message})
+            return JsonResponse({"message": assistant_message.replace("\n", "<br>")})
+
+    return render(request, "chat.html")
 

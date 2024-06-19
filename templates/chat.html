@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MusicMall ChatBot🤖</title>
+    <title>MusicMall 채팅창</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -78,15 +78,16 @@
             border-color: #007bff; /* 포커스 시 파란색 테두리 */
         }
         button {
-            background-color: #000000; /* 검은색 배경 */
-            color: #FFFFFF; /* 흰색 텍스트 */
-            border: 1px solid #808080; /* 회색 테두리 */
             padding: 10px 20px;
-            font-size: 16px;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            background-color: #007bff;
+            color: #ffffff;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #333333; /* 어두운 회색 호버 배경 */
+            background-color: #0056b3;
         }
         .title {
             font-size: 24px;
@@ -96,7 +97,7 @@
     </style>
 </head>
 <body>
-    <div class="title">MusicMall ChatBot 🤖</div>
+    <div class="title">MusicMall 채팅창</div>
     <div class="chat-container">
         <div class="messages" id="messages"></div>
         <form id="chat-form">
@@ -107,50 +108,51 @@
 
     <script>
         document.getElementById("chat-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const messageInput = document.getElementById("message-input");
-            const userMessage = messageInput.value;
+        event.preventDefault();
+        const messageInput = document.getElementById("message-input");
+        const userMessage = messageInput.value;
 
-            // 사용자 메시지를 화면에 추가
-            const messagesDiv = document.getElementById("messages");
-            const userMessageDiv = document.createElement("div");
-            userMessageDiv.className = "message user";
-            userMessageDiv.textContent = userMessage;
-            messagesDiv.appendChild(userMessageDiv);
+        // 사용자 메시지를 화면에 추가
+        const messagesDiv = document.getElementById("messages");
+        const userMessageDiv = document.createElement("div");
+        userMessageDiv.className = "message user";
+        userMessageDiv.textContent = userMessage;
+        messagesDiv.appendChild(userMessageDiv);
 
-            // '답변 중...' 메시지를 추가
-            const loadingMessageDiv = document.createElement("div");
-            loadingMessageDiv.className = "message loading";
-            loadingMessageDiv.textContent = "...";
-            messagesDiv.appendChild(loadingMessageDiv);
+        // '답변 중...' 메시지를 추가
+        const loadingMessageDiv = document.createElement("div");
+        loadingMessageDiv.className = "message loading";
+        loadingMessageDiv.textContent = "...";
+        messagesDiv.appendChild(loadingMessageDiv);
 
-            // 서버에 메시지 전송
-            fetch("", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-CSRFToken": getCookie("csrftoken")
-                },
-                body: new URLSearchParams({
-                    "message": userMessage
-                })
+        // 서버에 메시지 전송
+        fetch("", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: new URLSearchParams({
+                "message": userMessage
             })
-            .then(response => response.json())
-            .then(data => {
-                // '답변 중...' 메시지를 제거하고 서버로부터의 응답 메시지를 추가
-                messagesDiv.removeChild(loadingMessageDiv);
+        })
+        .then(response => response.json())
+        .then(data => {
+            // '답변 중...' 메시지를 제거하고 서버로부터의 응답 메시지를 추가
+            messagesDiv.removeChild(loadingMessageDiv);
 
-                const assistantMessageDiv = document.createElement("div");
-                assistantMessageDiv.className = "message assistant";
-                assistantMessageDiv.innerHTML = data.message; // textContent 대신 innerHTML 사용
-                messagesDiv.appendChild(assistantMessageDiv);
+            const assistantMessageDiv = document.createElement("div");
+            assistantMessageDiv.className = "message assistant";
+            assistantMessageDiv.innerHTML = data.message; // textContent 대신 innerHTML 사용
+            messagesDiv.appendChild(assistantMessageDiv);
 
-                // 스크롤을 맨 아래로 이동
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            });
-
-            messageInput.value = "";
+            // 스크롤을 맨 아래로 이동
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
+
+        messageInput.value = "";
+    });
+
 
         function getCookie(name) {
             let cookieValue = null;

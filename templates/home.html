@@ -85,7 +85,84 @@
     flex: 1 1 auto; /* flex-grow, flex-shrink, flex-basis 설정 */
     max-width: 200px; /* 최대 너비 설정 */
     height: 50px; /* 동일한 높이 설정 */
-}
+  }
+  .chatbot-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000; /* 다른 콘텐츠 위에 표시되도록 설정 */
+   }
+
+    .chat-container {
+        width: 60%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+    .messages {
+        height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #fafafa;
+    }
+    .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        line-height: 1.5;
+    }
+    .message.user {
+        text-align: right;
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+    .message.assistant {
+        text-align: left;
+        background-color: #f8d7da;
+        color: #842029;
+    }
+    .message.loading {
+        text-align: left;
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    #chat-form {
+        display: flex;
+    }
+    #message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px 0 0 10px;
+        outline: none;
+    }
+    #message-input:focus {
+        border-color: #007bff;
+    }
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 0 10px 10px 0;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
   @media (max-width: 576px) {
     .search-form {
       flex-direction: column;
@@ -459,12 +536,15 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
             {% endfor %}
         </div>
     </div>
+    <div class="container">
+      <button id="chatbot-button" class="btn btn-dark text-light chatbot-button">
+          챗봇과 대화하기
+      </button>
+  </div>
 {% endblock %}
 {% block extra-script %}
 <script>
@@ -581,5 +661,10 @@ function gotoLogin() {
         pauseAllOthers(audio);
         });
     });
+
+    document.getElementById("chatbot-button").addEventListener("click", function() {
+            // 현재 창에서 URL 변경
+            window.location.href = "/chat/";
+        });
 </script>
 {% endblock extra-script %}

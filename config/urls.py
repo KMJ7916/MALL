@@ -40,5 +40,6 @@ urlpatterns = [
     path('follows/', include('apps.follows.urls')),
     path('likes/', include('apps.likes.urls')),
     path('boards/', include('apps.boards.urls')),
+    path('chat/', views.chatbot_view, name='chatbot_view'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
