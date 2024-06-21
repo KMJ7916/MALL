@@ -64,7 +64,15 @@
         margin-top: 10px; /* 위 여백 */
         margin-bottom: 10px; /* 아래 여백 */
     }
-
+    #sort_button_group{
+        left: 5px
+    }
+    #select_container{
+        width: 100%;
+        white-space: nowrap;
+        left: 0;
+        padding:0,5;
+    }
     .btn {
             padding:5px;
         }
@@ -83,11 +91,12 @@
         <div class="container">
             <div class="row mt-3 mb-3">
                 <div class="col d-flex" id="search-elements">
-                    <div class="btn-group m-0" role="group" aria-label="Sort" style="border: 1px solid hsla(0, 0%, 100%, .3);" id="sort_button_group">
-                        <button type="button" class="btn btn-dark m-0" onclick="showRecent();" id="new_button">최신순</button>
-                        <button type="button" class="btn btn-dark m-0" onclick="showRanking();" id="popular_button">인기순</button>
+                    <div class="btn-group" role="group" aria-label="Sort" style=" margin-left: 10px; border: 1px solid hsla(0, 0%, 100%, .3);" id="sort_button_group">
+                        <button type="button" class="btn btn-dark " onclick="showRecent();" id="new_button">최신순</button>
+                        <button type="button" class="btn btn-dark " onclick="showRanking();" id="popular_button">인기순</button>
                     </div>
-                    <div style="display: inline-block; margin-left: 10px;">
+                    <div id="select_container" class="container">
+                    <div style="display: inline-block; margin-top: 10px; margin-left: 10px;">
 
                         <select id="genre-select" class="form-select bg-dark text-white" style="border: 1px solid hsla(0, 0%, 100%, .3);" onchange="filterByBoth(document.getElementById('tempo-select').value,this.value)">
 
@@ -112,7 +121,7 @@
                             <option value="etc">기타</option>
                         </select>
                     </div>
-                    <div style="display: inline-block; margin-left: 10px;">
+                    <div style="display: inline-block; margin-top: 10px; margin-left: 10px;">
                         <select id="tempo-select" class="form-select bg-dark text-white" onchange="filterByBoth(this.value, document.getElementById('genre-select').value)" style="border: 1px solid hsla(0, 0%, 100%, .3);">
                             <option value="">템포 선택</option>
                             <option value="slower">아주 느림</option>
@@ -121,6 +130,7 @@
                             <option value="fast">빠름</option>
                             <option value="faster">아주 빠름</option>
                         </select>
+                    </div>
                     </div>
                     <div style="display: inline-block; margin-left: 10px;">
                         <div class="d-flex ">
